@@ -1,12 +1,17 @@
-angular.module('HomeCtrl', []).controller('HomeController', function($scope,$http) {
+angular.module('HomeCtrl', []).controller('HomeController', function($scope,$http,$window) {
 
 	$scope.tagline = 'To the moon and back!';	
 	$scope.twit = function() {
 		console.log("twitter button clicked");
-		$http.get("/auth/twitter")
+		var config = {headers:  {
+		        'Access-Control-Allow-Origin': '*',
+		        "X-Testing" : "testing"
+		    }
+		};
+		$http.get("/auth/twitter",config)
 		.success(function (data) {
 			console.log(data);
 		})
-		//$window.location.href = '/auth/twitter';
+		// $window.location.href = '/auth/twitter';
 	}
 });
