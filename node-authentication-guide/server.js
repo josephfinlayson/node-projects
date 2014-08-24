@@ -1,4 +1,4 @@
-// server.js
+// npm in// server.js
 
 // set up ======================================================================
 // get all the tools we need
@@ -43,8 +43,8 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 console.log('The magic happens on port ' + port);
 
 var server = app.listen(port);
-var io = require('socket.io').listen(server);	
-//twitter stream begin 
+var io = require('socket.io').listen(server);
+//twitter stream begin
 
 var TWEETS_BUFFER_SIZE = 3;
 var SOCKETIO_TWEETS_EVENT = 'tweet-io:tweets';
@@ -58,7 +58,7 @@ var oldTweetsBuffer = [];
 var handleClient = function(data, socket) {
 	if (data == true) {
 		console.log('Client connected !');
-		
+
 		if (nbOpenSockets <= 0) {
 			nbOpenSockets = 0;
 			console.log('First active client. Start streaming from Twitter');
@@ -94,7 +94,7 @@ var broadcastTweets = function() {
 	if (tweetsBuffer.length >= TWEETS_BUFFER_SIZE) {
 		//broadcast tweets
 		io.sockets.emit(SOCKETIO_TWEETS_EVENT, tweetsBuffer);
-		
+
 		oldTweetsBuffer = tweetsBuffer;
 		tweetsBuffer = [];
 	}
@@ -125,60 +125,7 @@ var discardClient = function() {
 	});
 
 	// PROFILE SECTION =========================
-	app.get('/profile', isLoggedIn, function(req, res) {
-		var status = [];
-		 T = new Twit({
-		    consumer_key:         'xx'
-		  , consumer_secret:      'xx'
-		  , access_token:         req.user.twitter.token
-		  , access_token_secret:  req.user.twitter.tokenSecret
-		});
-
-		stream = T.stream('user', {});
-		stream.on('connect', function(request) {
-			console.log('Connected to Twitter API');
-
-			if (isFirstConnectionToTwitter) {
-				isFirstConnectionToTwitter = false;
-				console.log("stopping the stream");
-				stream.stop();
-			}
-		});
-
-		stream.on('disconnect', function(message) {
-			console.log('Disconnected from Twitter API. Message: ' + message);
-		});
-
-		stream.on('reconnect', function (request, response, connectInterval) {
-		  	console.log('Trying to reconnect to Twitter API in ' + connectInterval + ' ms');
-
-		});
-
-		T.get("statuses/user_timeline",{}, function(err, data, response) {
-			console.log(err);
-			console.log(response);
-			console.log(data);
-		});
-		stream.on('tweet', function(tweet) {
-			//Create message containing tweet + location + username + profile pic
-			var msg = {};
-			msg.text = tweet.text;
-			// msg.location = tweet.place.full_name;
-			msg.user = {
-				name: tweet.user.name, 
-				image: tweet.user.profile_image_url
-			};
-
-			//push msg into buffer
-			tweetsBuffer.push(msg);
-			console.log("broadcastTweets");
-			broadcastTweets();
-		});
-		res.render('profile.jade', {
-			user : req.user
-		});
-		
-	});
+	app.get('/profile', isLoggedIn, require('./controllers/twitter'));
 
 	// LOGOUT ==============================
 	app.get('/logout', function(req, res) {
@@ -212,8 +159,9 @@ var discardClient = function() {
 			}));
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
-	if (req.isAuthenticated())
+	// if (req.isAuthenticated())
 		return next();
 
-	res.redirect('/');
+	// res.redirect('/');
+
 }
