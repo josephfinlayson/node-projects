@@ -128,8 +128,8 @@ var discardClient = function() {
 	app.get('/profile', isLoggedIn, function(req, res) {
 		var status = [];
 		 T = new Twit({
-		    consumer_key:         '1iiHEvtWK3f1Wk6s9r7I1TKwi'
-		  , consumer_secret:      'p3nMatoxzJHIHEjKwqCwVJeauNE7meatpuTOTOxOeZ2CiLis2O'
+		    consumer_key:         'xx'
+		  , consumer_secret:      'xx'
 		  , access_token:         req.user.twitter.token
 		  , access_token_secret:  req.user.twitter.tokenSecret
 		});
